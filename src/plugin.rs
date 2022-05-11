@@ -147,7 +147,7 @@ impl GeyserPlugin for KafkaPlugin {
 
         publisher
             .update_transaction(event)
-            .map_err(|e| PluginError::TransactionUpdateError { msg: e.to_string() })
+            .map_err(|e| PluginError::Custom(Box::new(e)))
     }
 
     fn account_data_notifications_enabled(&self) -> bool {
