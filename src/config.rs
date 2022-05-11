@@ -63,7 +63,7 @@ impl Default for Config {
             slot_status_topic: "".to_owned(),
             transaction_topic: "".to_owned(),
             program_ignores: Vec::new(),
-            progam_filters: Vec::new(),
+            program_filters: Vec::new(),
             publish_all_accounts: false,
         }
     }
