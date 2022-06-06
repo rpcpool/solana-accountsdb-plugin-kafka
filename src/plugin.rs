@@ -90,8 +90,9 @@ impl GeyserPlugin for KafkaPlugin {
         }
 
         let info = Self::unwrap_update_account(account);
-        if !self.unwrap_filter().wants_program(info.owner) &&
-            !self.unwrap_filter().wants_account(info.pubkey) {
+        if !self.unwrap_filter().wants_program(info.owner)
+            && !self.unwrap_filter().wants_account(info.pubkey)
+        {
             return Ok(());
         }
 
@@ -150,7 +151,9 @@ impl GeyserPlugin for KafkaPlugin {
             .transaction
             .message()
             .account_keys_iter()
-            .any(|pubkey| filter.wants_program(pubkey.as_ref()) || filter.wants_account(pubkey.as_ref())
+            .any(|pubkey| {
+                filter.wants_program(pubkey.as_ref()) || filter.wants_account(pubkey.as_ref())
+            })
         {
             return Ok(());
         }

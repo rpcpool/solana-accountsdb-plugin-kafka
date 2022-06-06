@@ -50,7 +50,8 @@ impl Filter {
             Ok(key) => key,
             _ => return true,
         };
-        !self.program_ignores.contains(key) && (self.program_filters.len() == 0 || self.program_filters.contains(key))
+        !self.program_ignores.contains(key)
+            && (self.program_filters.is_empty() || self.program_filters.contains(key))
     }
 
     pub fn wants_account(&self, account: &[u8]) -> bool {
@@ -129,7 +130,7 @@ mod tests {
         let config = Config {
             program_filters: vec!["9xQeWvG816bUx9EPjHmaT23yvVM2ZWbrrpZb9PusVFin".to_owned()],
             account_filters: vec!["5KKsLVU6TcbVDK4BS6K1DGDxnh4Q9xjYJ8XaDCG5t8ht".to_owned()],
-            ..Config::default() 
+            ..Config::default()
         };
 
         let filter = Filter::new(&config);
@@ -137,7 +138,9 @@ mod tests {
         assert_eq!(filter.account_filters.len(), 1);
 
         println!("{:?}", filter.account_filters);
-        println!("{:?}", &Pubkey::from_str("5KKsLVU6TcbVDK4BS6K1DGDxnh4Q9xjYJ8XaDCG5t8ht")
+        println!(
+            "{:?}",
+            &Pubkey::from_str("5KKsLVU6TcbVDK4BS6K1DGDxnh4Q9xjYJ8XaDCG5t8ht")
                 .unwrap()
                 .to_bytes()
         );
