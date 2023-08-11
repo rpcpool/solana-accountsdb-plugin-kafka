@@ -23,6 +23,7 @@ pub struct Filter {
     program_filters: HashSet<[u8; 32]>,
     account_filters: HashSet<[u8; 32]>,
     include_vote_transactions: bool,
+    include_failed_transactions: bool,
 }
 
 impl Filter {
@@ -44,6 +45,7 @@ impl Filter {
                 .flat_map(|p| Pubkey::from_str(p).ok().map(|p| p.to_bytes()))
                 .collect(),
             include_vote_transactions: config.include_vote_transactions,
+            include_failed_transactions: config.include_failed_transactions,
         }
     }
 
@@ -66,6 +68,10 @@ impl Filter {
 
     pub fn wants_vote_tx(&self) -> bool {
         self.include_vote_transactions
+    }
+
+    pub fn wants_failed_tx(&self) -> bool {
+        self.include_failed_transactions
     }
 }
 

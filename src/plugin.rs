@@ -164,7 +164,8 @@ impl GeyserPlugin for KafkaPlugin {
         let filter = self.unwrap_filter();
         let info = Self::unwrap_transaction(transaction);
 
-        if !filter.wants_vote_tx() && info.is_vote {
+        let is_failed = info.transaction_status_meta.status.is_err();
+        if (!filter.wants_vote_tx() && info.is_vote) || (!filter.wants_failed_tx() && is_failed) {
             debug!("Ignoring vote transaction");
             return Ok(());
         }
