@@ -164,6 +164,11 @@ impl GeyserPlugin for KafkaPlugin {
         let filter = self.unwrap_filter();
         let info = Self::unwrap_transaction(transaction);
 
+        if !filter.wants_vote_tx() && info.is_vote {
+            debug!("Ignoring vote transaction");
+            return Ok(());
+        }
+
         let maybe_ignored = info
             .transaction
             .message()

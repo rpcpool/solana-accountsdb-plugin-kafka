@@ -22,6 +22,7 @@ pub struct Filter {
     program_ignores: HashSet<[u8; 32]>,
     program_filters: HashSet<[u8; 32]>,
     account_filters: HashSet<[u8; 32]>,
+    include_vote_transactions: bool,
 }
 
 impl Filter {
@@ -42,6 +43,7 @@ impl Filter {
                 .iter()
                 .flat_map(|p| Pubkey::from_str(p).ok().map(|p| p.to_bytes()))
                 .collect(),
+            include_vote_transactions: config.include_vote_transactions,
         }
     }
 
@@ -60,6 +62,10 @@ impl Filter {
             Ok(key) => self.account_filters.is_empty() || self.account_filters.contains(key),
             Err(_error) => true,
         }
+    }
+
+    pub fn wants_vote_tx(&self) -> bool {
+        self.include_vote_transactions
     }
 }
 
