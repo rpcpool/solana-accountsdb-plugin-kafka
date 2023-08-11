@@ -166,7 +166,7 @@ impl GeyserPlugin for KafkaPlugin {
 
         let is_failed = info.transaction_status_meta.status.is_err();
         if (!filter.wants_vote_tx() && info.is_vote) || (!filter.wants_failed_tx() && is_failed) {
-            debug!("Ignoring vote transaction");
+            debug!("Ignoring vote/failed transaction");
             return Ok(());
         }
 
