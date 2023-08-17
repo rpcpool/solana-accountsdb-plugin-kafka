@@ -21,11 +21,9 @@ use {
         },
         Config, MessageWrapper, SlotStatusEvent, TransactionEvent, UpdateAccountEvent,
     },
+    anyhow::Context,
     prost::Message,
-    rdkafka::{
-        error::KafkaError,
-        producer::{BaseRecord, Producer, ThreadedProducer},
-    },
+    rdkafka::producer::{BaseRecord, Producer, ThreadedProducer},
     std::time::Duration,
 };
 
@@ -52,7 +50,7 @@ impl Publisher {
         }
     }
 
-    pub fn update_account(&self, ev: UpdateAccountEvent) -> Result<(), KafkaError> {
+    pub fn update_account(&self, ev: UpdateAccountEvent) -> anyhow::Result<()> {
         let temp_key;
         let (key, buf) = if self.wrap_messages {
             temp_key = self.copy_and_prepend(ev.pubkey.as_slice(), 65u8);
@@ -67,10 +65,15 @@ impl Publisher {
         UPLOAD_ACCOUNTS_TOTAL
             .with_label_values(&[if result.is_ok() { "success" } else { "failed" }])
             .inc();
-        result
+        result.with_context(|| {
+            format!(
+                "Failed to send account to topic: {}",
+                self.update_account_topic
+            )
+        })
     }
 
-    pub fn update_slot_status(&self, ev: SlotStatusEvent) -> Result<(), KafkaError> {
+    pub fn update_slot_status(&self, ev: SlotStatusEvent) -> anyhow::Result<()> {
         let temp_key;
         let (key, buf) = if self.wrap_messages {
             temp_key = self.copy_and_prepend(&ev.slot.to_le_bytes(), 83u8);
@@ -86,10 +89,15 @@ impl Publisher {
         UPLOAD_SLOTS_TOTAL
             .with_label_values(&[if result.is_ok() { "success" } else { "failed" }])
             .inc();
-        result
+        result.with_context(|| {
+            format!(
+                "Failed to send slot status to topic: {}",
+                self.slot_status_topic
+            )
+        })
     }
 
-    pub fn update_transaction(&self, ev: TransactionEvent) -> Result<(), KafkaError> {
+    pub fn update_transaction(&self, ev: TransactionEvent) -> anyhow::Result<()> {
         let temp_key;
         let (key, buf) = if self.wrap_messages {
             temp_key = self.copy_and_prepend(ev.signature.as_slice(), 84u8);
@@ -107,7 +115,12 @@ impl Publisher {
         UPLOAD_TRANSACTIONS_TOTAL
             .with_label_values(&[if result.is_ok() { "success" } else { "failed" }])
             .inc();
-        result
+        result.with_context(|| {
+            format!(
+                "Failed to send transaction to topic: {}",
+                self.transaction_topic
+            )
+        })
     }
 
     pub fn wants_update_account(&self) -> bool {
