@@ -2,7 +2,8 @@
 # https://github.com/solana-labs/solana-accountsdb-plugin-postgres/blob/master/.github/workflows/test.yml
 
 on:
-  push:
+  workflow_dispatch:
+  pull_request:
 
 env:
   CARGO_TERM_COLOR: always
