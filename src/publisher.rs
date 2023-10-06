@@ -21,10 +21,7 @@ use {
         *,
     },
     prost::Message,
-    rdkafka::{
-        error::KafkaError,
-        producer::{BaseRecord, Producer, ThreadedProducer},
-    },
+    rdkafka::producer::{BaseRecord, Producer, ThreadedProducer},
     std::time::Duration,
 };
 
@@ -48,32 +45,45 @@ impl Publisher {
         }
     }
 
-    pub fn update_account(&self, ev: UpdateAccountEvent) -> Result<(), KafkaError> {
+    pub fn update_account(&self, ev: UpdateAccountEvent) -> Result<(), String> {
         let buf = ev.encode_to_vec();
         let record = BaseRecord::<Vec<u8>, _>::to(&self.update_account_topic)
             .key(&ev.pubkey)
             .payload(&buf);
-        let result = self.producer.send(record).map(|_| ()).map_err(|(e, _)| e);
+        let result = self.producer.send(record).map(|_| ()).map_err(|(e, _)| {
+            format!(
+                "Account, TOPIC: {}, ERROR: {:?}",
+                self.update_account_topic, e
+            )
+        });
         UPLOAD_ACCOUNTS_TOTAL
             .with_label_values(&[if result.is_ok() { "success" } else { "failed" }])
             .inc();
         result
     }
 
-    pub fn update_slot_status(&self, ev: SlotStatusEvent) -> Result<(), KafkaError> {
+    pub fn update_slot_status(&self, ev: SlotStatusEvent) -> Result<(), String> {
         let buf = ev.encode_to_vec();
         let record = BaseRecord::<(), _>::to(&self.slot_status_topic).payload(&buf);
-        let result = self.producer.send(record).map(|_| ()).map_err(|(e, _)| e);
+        let result =
+            self.producer.send(record).map(|_| ()).map_err(|(e, _)| {
+                format!("Slot, TOPIC: {}, ERROR: {:?}", self.slot_status_topic, e)
+            });
         UPLOAD_SLOTS_TOTAL
             .with_label_values(&[if result.is_ok() { "success" } else { "failed" }])
             .inc();
         result
     }
 
-    pub fn update_transaction(&self, ev: TransactionEvent) -> Result<(), KafkaError> {
+    pub fn update_transaction(&self, ev: TransactionEvent) -> Result<(), String> {
         let buf = ev.encode_to_vec();
         let record = BaseRecord::<(), _>::to(&self.transaction_topic).payload(&buf);
-        let result = self.producer.send(record).map(|_| ()).map_err(|(e, _)| e);
+        let result = self.producer.send(record).map(|_| ()).map_err(|(e, _)| {
+            format!(
+                "Transaction, TOPIC: {}, ERROR: {:?}",
+                self.transaction_topic, e
+            )
+        });
         UPLOAD_TRANSACTIONS_TOTAL
             .with_label_values(&[if result.is_ok() { "success" } else { "failed" }])
             .inc();

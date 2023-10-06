@@ -126,7 +126,7 @@ impl GeyserPlugin for KafkaPlugin {
         let publisher = self.unwrap_publisher();
         publisher
             .update_account(event)
-            .map_err(|e| PluginError::AccountsUpdateError { msg: e.to_string() })
+            .map_err(|msg| PluginError::AccountsUpdateError { msg })
     }
 
     fn update_slot_status(
@@ -148,7 +148,7 @@ impl GeyserPlugin for KafkaPlugin {
 
         publisher
             .update_slot_status(event)
-            .map_err(|e| PluginError::AccountsUpdateError { msg: e.to_string() })
+            .map_err(|msg| PluginError::AccountsUpdateError { msg })
     }
 
     fn notify_transaction(
@@ -184,7 +184,7 @@ impl GeyserPlugin for KafkaPlugin {
 
         publisher
             .update_transaction(event)
-            .map_err(|e| PluginError::TransactionUpdateError { msg: e.to_string() })
+            .map_err(|msg| PluginError::TransactionUpdateError { msg })
     }
 
     fn account_data_notifications_enabled(&self) -> bool {
