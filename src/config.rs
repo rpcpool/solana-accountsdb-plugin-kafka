@@ -31,6 +31,9 @@ use {
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Config {
+    #[allow(dead_code)]
+    libpath: String,
+
     /// Kafka config.
     pub kafka: HashMap<String, String>,
 
@@ -48,6 +51,7 @@ pub struct Config {
 impl Default for Config {
     fn default() -> Self {
         Self {
+            libpath: "".to_owned(),
             kafka: HashMap::new(),
             shutdown_timeout_ms: 30_000,
             filters: vec![],
