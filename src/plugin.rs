@@ -173,20 +173,16 @@ impl GeyserPlugin for KafkaPlugin {
                     continue;
                 }
 
-                let maybe_ignored =
-                    info.transaction
-                        .message()
-                        .account_keys()
-                        .iter()
-                        .find(|pubkey| {
-                            !(filter.wants_program(pubkey.as_ref())
-                                || filter.wants_account(pubkey.as_ref()))
-                        });
-                if let Some(ignored) = maybe_ignored {
-                    debug!(
-                        "Ignoring transaction {:?} due to account key: {:?}",
-                        info.signature, ignored
-                    );
+                if !info
+                    .transaction
+                    .message()
+                    .account_keys()
+                    .iter()
+                    .any(|pubkey| {
+                        filter.wants_program(pubkey.as_ref())
+                            || filter.wants_account(pubkey.as_ref())
+                    })
+                {
                     continue;
                 }
 
