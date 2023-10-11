@@ -98,13 +98,14 @@ impl GeyserPlugin for KafkaPlugin {
         slot: u64,
         is_startup: bool,
     ) -> PluginResult<()> {
-        if is_startup {
+        let filters = self.unwrap_filters();
+        if is_startup && filters.iter().all(|filter| !filter.publish_all_accounts) {
             return Ok(());
         }
 
         let info = Self::unwrap_update_account(account);
         let publisher = self.unwrap_publisher();
-        for filter in self.unwrap_filters() {
+        for filter in filters {
             if !filter.update_account_topic.is_empty() {
                 if !filter.wants_program(info.owner) && !filter.wants_account(info.pubkey) {
                     Self::log_ignore_account_update(info);
@@ -183,6 +184,7 @@ impl GeyserPlugin for KafkaPlugin {
                             || filter.wants_account(pubkey.as_ref())
                     })
                 {
+                    debug!("Ignoring transaction {:?}", info.signature);
                     continue;
                 }
 

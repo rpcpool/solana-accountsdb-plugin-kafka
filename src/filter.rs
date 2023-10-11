@@ -19,6 +19,7 @@ use {
 };
 
 pub struct Filter {
+    pub publish_all_accounts: bool,
     pub program_ignores: HashSet<[u8; 32]>,
     pub program_filters: HashSet<[u8; 32]>,
     pub account_filters: HashSet<[u8; 32]>,
@@ -35,6 +36,7 @@ pub struct Filter {
 impl Filter {
     pub fn new(config: &ConfigFilter) -> Self {
         Self {
+            publish_all_accounts: config.publish_all_accounts,
             program_ignores: config
                 .program_ignores
                 .iter()

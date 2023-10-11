@@ -41,6 +41,7 @@ pub struct Config {
     #[serde(default)]
     pub shutdown_timeout_ms: u64,
 
+    /// Accounts, transactions filters
     pub filters: Vec<ConfigFilter>,
 
     /// Prometheus endpoint.
@@ -113,6 +114,8 @@ pub struct ConfigFilter {
     pub program_filters: Vec<String>,
     // List of accounts to include
     pub account_filters: Vec<String>,
+    /// Publish all accounts on startup.
+    pub publish_all_accounts: bool,
     /// Publish vote transactions.
     pub include_vote_transactions: bool,
     /// Publish failed transactions.
@@ -130,6 +133,7 @@ impl Default for ConfigFilter {
             program_ignores: Vec::new(),
             program_filters: Vec::new(),
             account_filters: Vec::new(),
+            publish_all_accounts: false,
             include_vote_transactions: true,
             include_failed_transactions: true,
             wrap_messages: false,
