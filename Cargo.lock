@@ -2881,11 +2881,10 @@ dependencies = [
 [[package]]
 name = "solana-geyser-plugin-interface"
 version = "1.16.17"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "80a4b54b34ca8365c6b71ee21ea4a49cbce324eb4e9f62138f447ec7b9f05dc5"
+source = "git+https://github.com/rpcpool/solana-public.git?tag=v1.16.17-geyser-block-v3#cdcfdb86e42956cf955a5ca6c5ef188821c70781"
 dependencies = [
  "log",
- "solana-sdk 1.16.17 (registry+https://github.com/rust-lang/crates.io-index)",
+ "solana-sdk 1.16.17 (git+https://github.com/rpcpool/solana-public.git?tag=v1.16.17-geyser-block-v3)",
  "solana-transaction-status",
  "thiserror",
 ]

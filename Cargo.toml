@@ -46,5 +46,6 @@ inherits = "release"
 debug = false
 
 [patch.crates-io]
+solana-geyser-plugin-interface = { git = "https://github.com/rpcpool/solana-public.git", tag = "v1.16.17-geyser-block-v3" }
 solana-program = { git = "https://github.com/rpcpool/solana-public.git", tag = "v1.16.17-geyser-block-v3" }
 solana-transaction-status = { git = "https://github.com/rpcpool/solana-public.git", tag = "v1.16.17-geyser-block-v3" }
