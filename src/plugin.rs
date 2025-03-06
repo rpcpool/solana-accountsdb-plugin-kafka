@@ -14,7 +14,12 @@
 
 use {
     crate::{
-        sanitized_message, CompiledInstruction, Config, Filter, InnerInstruction, InnerInstructions, LegacyLoadedMessage, LegacyMessage, LoadedAddresses, MessageAddressTableLookup, MessageHeader, PrometheusService, Publisher, Reward, SanitizedMessage, SanitizedTransaction, SlotStatus, SlotStatusEvent, TransactionEvent, TransactionStatusMeta, TransactionTokenBalance, UiTokenAmount, UpdateAccountEvent, V0LoadedMessage, V0Message
+        sanitized_message, CompiledInstruction, Config, Filter, InnerInstruction,
+        InnerInstructions, LegacyLoadedMessage, LegacyMessage, LoadedAddresses,
+        MessageAddressTableLookup, MessageHeader, PrometheusService, Publisher, Reward,
+        SanitizedMessage, SanitizedTransaction, SlotStatus, SlotStatusEvent, TransactionEvent,
+        TransactionStatusMeta, TransactionTokenBalance, UiTokenAmount, UpdateAccountEvent,
+        V0LoadedMessage, V0Message,
     },
     agave_geyser_plugin_interface::geyser_plugin_interface::{
         GeyserPlugin, GeyserPluginError as PluginError, ReplicaAccountInfoV3,
@@ -142,7 +147,8 @@ impl GeyserPlugin for KafkaPlugin {
             PluginSlotStatus::Confirmed => SlotStatus::Confirmed,
             PluginSlotStatus::Rooted => SlotStatus::Rooted,
             _ => return Ok(()),
-        }.into();
+        }
+        .into();
 
         let publisher = self.unwrap_publisher();
         for filter in self.unwrap_filters() {
