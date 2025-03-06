@@ -14,7 +14,7 @@
 
 use {
     crate::{
-        event, sanitized_message, CompiledInstruction, Config, Filter, InnerInstruction, InnerInstructions, LegacyLoadedMessage, LegacyMessage, LoadedAddresses, MessageAddressTableLookup, MessageHeader, PrometheusService, Publisher, Reward, SanitizedMessage, SanitizedTransaction, SlotStatus, SlotStatusEvent, TransactionEvent, TransactionStatusMeta, TransactionTokenBalance, UiTokenAmount, UpdateAccountEvent, V0LoadedMessage, V0Message
+        sanitized_message, CompiledInstruction, Config, Filter, InnerInstruction, InnerInstructions, LegacyLoadedMessage, LegacyMessage, LoadedAddresses, MessageAddressTableLookup, MessageHeader, PrometheusService, Publisher, Reward, SanitizedMessage, SanitizedTransaction, SlotStatus, SlotStatusEvent, TransactionEvent, TransactionStatusMeta, TransactionTokenBalance, UiTokenAmount, UpdateAccountEvent, V0LoadedMessage, V0Message
     },
     agave_geyser_plugin_interface::geyser_plugin_interface::{
         GeyserPlugin, GeyserPluginError as PluginError, ReplicaAccountInfoV3,
@@ -137,13 +137,20 @@ impl GeyserPlugin for KafkaPlugin {
         parent: Option<u64>,
         status: &PluginSlotStatus,
     ) -> PluginResult<()> {
+        let status = match status {
+            PluginSlotStatus::Processed => SlotStatus::Processed,
+            PluginSlotStatus::Confirmed => SlotStatus::Confirmed,
+            PluginSlotStatus::Rooted => SlotStatus::Rooted,
+            _ => return Ok(()),
+        }.into();
+
         let publisher = self.unwrap_publisher();
         for filter in self.unwrap_filters() {
             if !filter.slot_status_topic.is_empty() {
                 let event = SlotStatusEvent {
                     slot,
                     parent: parent.unwrap_or(0),
-                    status: SlotStatus::from(event::SlotStatus::try_from(status.clone())).into(),
+                    status,
                 };
 
                 publisher
