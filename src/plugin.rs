@@ -140,15 +140,23 @@ impl GeyserPlugin for KafkaPlugin {
         &self,
         slot: u64,
         parent: Option<u64>,
-        status: PluginSlotStatus,
+        status: &PluginSlotStatus,
     ) -> PluginResult<()> {
+        let status = match status {
+            PluginSlotStatus::Processed => SlotStatus::Processed,
+            PluginSlotStatus::Confirmed => SlotStatus::Confirmed,
+            PluginSlotStatus::Rooted => SlotStatus::Rooted,
+            _ => return Ok(()),
+        }
+        .into();
+
         let publisher = self.unwrap_publisher();
         for filter in self.unwrap_filters() {
             if !filter.slot_status_topic.is_empty() {
                 let event = SlotStatusEvent {
                     slot,
                     parent: parent.unwrap_or(0),
-                    status: SlotStatus::from(status).into(),
+                    status,
                 };
 
                 publisher
